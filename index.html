@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mute · Tải video không tiếng</title>
+<style>
+  :root{
+    --bg: #12100e;
+    --bg-raised: #1b1815;
+    --line: #322c26;
+    --ink: #f2ede4;
+    --ink-dim: #9a8f80;
+    --accent: #e8a13a;
+    --accent-dim: #6b5528;
+    --error: #e2685a;
+    --ok: #7fb88f;
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 40px;
+  }
+
+  .wrap{ width: 100%; max-width: 480px; }
+
+  header{
+    padding: 48px 0 28px;
+    text-align: left;
+  }
+  .eyebrow{
+    font-family: "SF Mono", "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  h1{
+    font-size: 30px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    font-weight: 650;
+  }
+  .sub{
+    color: var(--ink-dim);
+    font-size: 14.5px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Signature: waveform that fades to a flat silent line */
+  .wave{
+    display:flex;
+    align-items:flex-end;
+    gap: 3px;
+    height: 26px;
+    margin: 18px 0 2px;
+  }
+  .wave span{
+    width: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    animation: none;
+  }
+  .wave span:nth-child(1){ height: 8px; opacity:.95 }
+  .wave span:nth-child(2){ height: 18px; opacity:.9 }
+  .wave span:nth-child(3){ height: 11px; opacity:.8 }
+  .wave span:nth-child(4){ height: 22px; opacity:.7 }
+  .wave span:nth-child(5){ height: 14px; opacity:.55 }
+  .wave span:nth-child(6){ height: 9px; opacity:.4 }
+  .wave span:nth-child(7){ height: 5px; opacity:.28 }
+  .wave span:nth-child(8){ height: 3px; opacity:.16 }
+  .wave span:nth-child(9){ height: 2px; opacity:.1 }
+  .wave span:nth-child(10){ height: 2px; opacity:.08 }
+
+  form{
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    margin-top: 22px;
+  }
+  label{
+    display:block;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 8px;
+  }
+  input[type=url]{
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 14px;
+    color: var(--ink);
+    font-size: 16px;
+    outline: none;
+  }
+  input[type=url]:focus{
+    border-color: var(--accent);
+  }
+  input[type=url]::placeholder{ color: #6b6357; }
+
+  button{
+    width: 100%;
+    margin-top: 14px;
+    background: var(--accent);
+    color: #1c1305;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 15.5px;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+  button:active{ transform: scale(0.985); }
+  button:disabled{
+    background: var(--accent-dim);
+    color: #b6a888;
+    cursor: not-allowed;
+  }
+
+  .status{
+    margin-top: 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    display: none;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+  }
+  .status.show{ display: block; }
+  .status.err{ border-color: var(--error); color: var(--error); }
+  .status.ok{ border-color: var(--ok); color: var(--ok); }
+  .status.pending{ color: var(--ink-dim); }
+
+  .steps{
+    margin-top: 34px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .steps .eyebrow{ margin-bottom: 14px; }
+  .step{
+    display:flex;
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 13.5px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+  }
+  .step b{ color: var(--ink); font-weight: 600; }
+  .num{
+    font-family: "SF Mono", "Courier New", monospace;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  footer{
+    margin-top: 32px;
+    font-size: 12px;
+    color: #5c5348;
+    line-height: 1.6;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .spin{
+      display:inline-block;
+      width: 13px; height: 13px;
+      border: 2px solid var(--accent-dim);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: -2px;
+      margin-right: 7px;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">TikTok → MP4, không tiếng</p>
+      <div class="wave">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <h1>Dán link, nhận lại hình.</h1>
+      <p class="sub">Giữ nguyên chất lượng video, bỏ hoàn toàn phần âm thanh.</p>
+    </header>
+
+    <form id="form">
+      <label for="url">Link TikTok</label>
+      <input type="url" id="url" name="url" placeholder="https://vt.tiktok.com/..." required autocomplete="off" autocapitalize="off" autocorrect="off">
+      <button type="submit" id="btn">Tải video không tiếng</button>
+      <div class="status" id="status"></div>
+    </form>
+
+    <div class="steps">
+      <p class="eyebrow">Cách hoạt động</p>
+      <div class="step"><span class="num">01</span><span><b>Dán link</b> video TikTok bất kỳ vào ô trên.</span></div>
+      <div class="step"><span class="num">02</span><span><b>Xử lý</b> — server tải video gốc rồi cắt bỏ audio, giữ nguyên hình.</span></div>
+      <div class="step"><span class="num">03</span><span><b>Nhận file</b> — trình duyệt tự tải file MP4 về máy bạn.</span></div>
+    </div>
+
+    <footer>
+      Chỉ dùng cho mục đích cá nhân. Tôn trọng bản quyền và điều khoản của TikTok khi sử dụng nội dung tải về.
+    </footer>
+  </div>
+
+<script>
+const form = document.getElementById('form');
+const btn = document.getElementById('btn');
+const status = document.getElementById('status');
+const urlInput = document.getElementById('url');
+
+function setStatus(kind, html){
+  status.className = 'status show ' + kind;
+  status.innerHTML = html;
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const url = urlInput.value.trim();
+  if(!url) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Đang xử lý...';
+  setStatus('pending', '<span class="spin"></span>Đang tải video và bỏ tiếng — có thể mất 10–30 giây.');
+
+  try{
+    const res = await fetch('/api/download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+
+    if(!res.ok){
+      let msg = 'Có lỗi xảy ra, thử lại.';
+      try{
+        const errData = await res.json();
+        if(errData.detail) msg = errData.detail;
+      }catch(_){}
+      throw new Error(msg);
+    }
+
+    const blob = await res.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = 'tiktok_no_audio.mp4';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+
+    setStatus('ok', '✓ Xong! File đã được tải về máy bạn.');
+  }catch(err){
+    setStatus('err', '✕ ' + err.message);
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Tải video không tiếng';
+  }
+});
+</script>
+</body>
+</html>
