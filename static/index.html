@@ -28,191 +28,117 @@
     align-items: center;
     padding: 0 20px 40px;
   }
-
   .wrap{ width: 100%; max-width: 480px; }
-
-  header{
-    padding: 48px 0 28px;
-    text-align: left;
-  }
+  header{ padding: 40px 0 24px; text-align: left; }
   .eyebrow{
     font-family: "SF Mono", "Courier New", monospace;
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin: 0 0 10px;
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 10px;
   }
-  h1{
-    font-size: 30px;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin: 0 0 10px;
-    font-weight: 650;
-  }
-  .sub{
-    color: var(--ink-dim);
-    font-size: 14.5px;
-    line-height: 1.5;
-    margin: 0;
-  }
+  h1{ font-size: 27px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 10px; font-weight: 650; }
+  .sub{ color: var(--ink-dim); font-size: 14px; line-height: 1.5; margin: 0; }
 
-  /* Signature: waveform that fades to a flat silent line */
-  .wave{
-    display:flex;
-    align-items:flex-end;
-    gap: 3px;
-    height: 26px;
-    margin: 18px 0 2px;
-  }
-  .wave span{
-    width: 3px;
-    background: var(--accent);
-    border-radius: 2px;
-    animation: none;
-  }
-  .wave span:nth-child(1){ height: 8px; opacity:.95 }
-  .wave span:nth-child(2){ height: 18px; opacity:.9 }
-  .wave span:nth-child(3){ height: 11px; opacity:.8 }
-  .wave span:nth-child(4){ height: 22px; opacity:.7 }
-  .wave span:nth-child(5){ height: 14px; opacity:.55 }
-  .wave span:nth-child(6){ height: 9px; opacity:.4 }
-  .wave span:nth-child(7){ height: 5px; opacity:.28 }
-  .wave span:nth-child(8){ height: 3px; opacity:.16 }
-  .wave span:nth-child(9){ height: 2px; opacity:.1 }
-  .wave span:nth-child(10){ height: 2px; opacity:.08 }
-
-  form{
+  .card{
     background: var(--bg-raised);
     border: 1px solid var(--line);
     border-radius: 16px;
     padding: 18px;
-    margin-top: 22px;
+    margin-top: 16px;
   }
   label{
-    display:block;
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    margin-bottom: 8px;
+    display:block; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-dim); margin-bottom: 8px;
   }
-  input[type=url]{
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 14px;
-    color: var(--ink);
-    font-size: 16px;
-    outline: none;
+  input[type=url], input[type=text]{
+    width: 100%; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px; color: var(--ink); font-size: 16px; outline: none;
   }
-  input[type=url]:focus{
-    border-color: var(--accent);
-  }
-  input[type=url]::placeholder{ color: #6b6357; }
+  input:focus{ border-color: var(--accent); }
+  input::placeholder{ color: #6b6357; }
 
   button{
-    width: 100%;
-    margin-top: 14px;
-    background: var(--accent);
-    color: #1c1305;
-    border: none;
-    border-radius: 10px;
-    padding: 15px;
-    font-size: 15.5px;
-    font-weight: 650;
-    letter-spacing: 0.01em;
-    cursor: pointer;
+    width: 100%; margin-top: 14px; background: var(--accent); color: #1c1305;
+    border: none; border-radius: 10px; padding: 15px; font-size: 15.5px;
+    font-weight: 650; letter-spacing: 0.01em; cursor: pointer;
+  }
+  button.secondary{
+    background: transparent; color: var(--ink); border: 1px solid var(--line);
   }
   button:active{ transform: scale(0.985); }
-  button:disabled{
-    background: var(--accent-dim);
-    color: #b6a888;
-    cursor: not-allowed;
-  }
+  button:disabled{ background: var(--accent-dim); color: #b6a888; cursor: not-allowed; }
 
   .status{
-    margin-top: 16px;
-    font-size: 13.5px;
-    line-height: 1.5;
-    display: none;
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--line);
+    margin-top: 14px; font-size: 13.5px; line-height: 1.5; display: none;
+    padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line);
   }
   .status.show{ display: block; }
   .status.err{ border-color: var(--error); color: var(--error); }
   .status.ok{ border-color: var(--ok); color: var(--ok); }
   .status.pending{ color: var(--ink-dim); }
 
-  .steps{
-    margin-top: 34px;
-    border-top: 1px solid var(--line);
-    padding-top: 20px;
+  #editStep{ display:none; }
+  .preview-wrap{
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    touch-action: none;
+    background: #000;
   }
-  .steps .eyebrow{ margin-bottom: 14px; }
-  .step{
-    display:flex;
-    gap: 12px;
-    padding: 10px 0;
-    font-size: 13.5px;
-    color: var(--ink-dim);
-    line-height: 1.5;
+  .preview-wrap img{ display:block; width: 100%; height: auto; user-select:none; -webkit-user-drag: none; }
+  #selBox{
+    position: absolute; border: 2px solid var(--accent);
+    background: rgba(232,161,58,0.18);
+    display: none;
+    pointer-events: none;
   }
-  .step b{ color: var(--ink); font-weight: 600; }
-  .num{
-    font-family: "SF Mono", "Courier New", monospace;
-    color: var(--accent);
-    flex-shrink: 0;
-  }
+  .hint{ font-size: 12.5px; color: var(--ink-dim); margin-top: 10px; line-height: 1.5; }
+  .btn-row{ display:flex; gap: 10px; margin-top: 14px; }
+  .btn-row button{ margin-top: 0; }
 
-  footer{
-    margin-top: 32px;
-    font-size: 12px;
-    color: #5c5348;
-    line-height: 1.6;
+  .spin{
+    display:inline-block; width: 13px; height: 13px;
+    border: 2px solid var(--accent-dim); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: -2px; margin-right: 7px;
   }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
 
-  @media (prefers-reduced-motion: no-preference){
-    .spin{
-      display:inline-block;
-      width: 13px; height: 13px;
-      border: 2px solid var(--accent-dim);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: -2px;
-      margin-right: 7px;
-    }
-    @keyframes spin{ to{ transform: rotate(360deg); } }
-  }
+  footer{ margin-top: 28px; font-size: 12px; color: #5c5348; line-height: 1.6; }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <p class="eyebrow">TikTok → MP4, không tiếng</p>
-      <div class="wave">
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <h1>Dán link, nhận lại hình.</h1>
-      <p class="sub">Giữ nguyên chất lượng video, bỏ hoàn toàn phần âm thanh.</p>
+      <h1>Dán link, chỉnh sửa, tải về.</h1>
+      <p class="sub">Bỏ tiếng, che logo/chữ giới thiệu kênh và thay bằng chữ của bạn.</p>
     </header>
 
-    <form id="form">
+    <div class="card" id="urlStep">
       <label for="url">Link TikTok</label>
-      <input type="url" id="url" name="url" placeholder="https://vt.tiktok.com/..." required autocomplete="off" autocapitalize="off" autocorrect="off">
-      <button type="submit" id="btn">Tải video không tiếng</button>
-      <div class="status" id="status"></div>
-    </form>
+      <input type="url" id="url" placeholder="https://vt.tiktok.com/..." autocomplete="off" autocapitalize="off" autocorrect="off">
+      <button id="prepareBtn">Tải video &amp; xem trước</button>
+      <div class="status" id="prepareStatus"></div>
+    </div>
 
-    <div class="steps">
-      <p class="eyebrow">Cách hoạt động</p>
-      <div class="step"><span class="num">01</span><span><b>Dán link</b> video TikTok bất kỳ vào ô trên.</span></div>
-      <div class="step"><span class="num">02</span><span><b>Xử lý</b> — server tải video gốc rồi cắt bỏ audio, giữ nguyên hình.</span></div>
-      <div class="step"><span class="num">03</span><span><b>Nhận file</b> — trình duyệt tự tải file MP4 về máy bạn.</span></div>
+    <div class="card" id="editStep">
+      <label>Kéo khung để chọn vùng cần che (logo / chữ giới thiệu kênh)</label>
+      <div class="preview-wrap" id="previewWrap">
+        <img id="previewImg" src="" alt="preview">
+        <div id="selBox"></div>
+      </div>
+      <p class="hint">Chạm và kéo trên ảnh để vẽ khung. Không cần chọn nếu video không có chữ/logo cần che.</p>
+
+      <label style="margin-top:16px">Chữ thay thế</label>
+      <input type="text" id="replaceText" value="YT: Truyện Dịch Full">
+
+      <div class="btn-row">
+        <button class="secondary" id="clearBtn">Xoá khung</button>
+        <button id="processBtn">Xử lý &amp; tải video</button>
+      </div>
+      <div class="status" id="processStatus"></div>
     </div>
 
     <footer>
@@ -221,57 +147,169 @@
   </div>
 
 <script>
-const form = document.getElementById('form');
-const btn = document.getElementById('btn');
-const status = document.getElementById('status');
 const urlInput = document.getElementById('url');
+const prepareBtn = document.getElementById('prepareBtn');
+const prepareStatus = document.getElementById('prepareStatus');
+const editStep = document.getElementById('editStep');
+const previewWrap = document.getElementById('previewWrap');
+const previewImg = document.getElementById('previewImg');
+const selBox = document.getElementById('selBox');
+const replaceText = document.getElementById('replaceText');
+const clearBtn = document.getElementById('clearBtn');
+const processBtn = document.getElementById('processBtn');
+const processStatus = document.getElementById('processStatus');
 
-function setStatus(kind, html){
-  status.className = 'status show ' + kind;
-  status.innerHTML = html;
+let currentJobId = null;
+let rect = null; // {x,y,w,h} tỉ lệ 0-1
+let dragStart = null;
+
+function setStatus(el, kind, html){
+  el.className = 'status show ' + kind;
+  el.innerHTML = html;
 }
+function clearStatus(el){ el.className = 'status'; el.innerHTML=''; }
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+prepareBtn.addEventListener('click', async () => {
   const url = urlInput.value.trim();
   if(!url) return;
 
-  btn.disabled = true;
-  btn.textContent = 'Đang xử lý...';
-  setStatus('pending', '<span class="spin"></span>Đang tải video và bỏ tiếng — có thể mất 10–30 giây.');
+  prepareBtn.disabled = true;
+  prepareBtn.textContent = 'Đang tải...';
+  setStatus(prepareStatus, 'pending', '<span class="spin"></span>Đang tải video và tạo ảnh xem trước...');
 
   try{
-    const res = await fetch('/api/download', {
+    const res = await fetch('/api/prepare', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({url})
     });
-
     if(!res.ok){
-      let msg = 'Có lỗi xảy ra, thử lại.';
-      try{
-        const errData = await res.json();
-        if(errData.detail) msg = errData.detail;
-      }catch(_){}
-      throw new Error(msg);
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.detail || 'Có lỗi xảy ra.');
     }
+    const data = await res.json();
+    currentJobId = data.job_id;
+    previewImg.src = '/api/frame/' + currentJobId + '?t=' + Date.now();
+    editStep.style.display = 'block';
+    rect = null;
+    selBox.style.display = 'none';
+    clearStatus(prepareStatus);
+    editStep.scrollIntoView({behavior:'smooth', block:'start'});
+  }catch(err){
+    setStatus(prepareStatus, 'err', '✕ ' + err.message);
+  }finally{
+    prepareBtn.disabled = false;
+    prepareBtn.textContent = 'Tải video & xem trước';
+  }
+});
 
+function getRelativePos(clientX, clientY){
+  const r = previewWrap.getBoundingClientRect();
+  let x = (clientX - r.left) / r.width;
+  let y = (clientY - r.top) / r.height;
+  x = Math.min(Math.max(x, 0), 1);
+  y = Math.min(Math.max(y, 0), 1);
+  return {x, y};
+}
+
+function updateSelBoxVisual(x0,y0,x1,y1){
+  const left = Math.min(x0,x1) * 100;
+  const top = Math.min(y0,y1) * 100;
+  const w = Math.abs(x1-x0) * 100;
+  const h = Math.abs(y1-y0) * 100;
+  selBox.style.left = left + '%';
+  selBox.style.top = top + '%';
+  selBox.style.width = w + '%';
+  selBox.style.height = h + '%';
+  selBox.style.display = (w > 0.5 && h > 0.5) ? 'block' : 'none';
+}
+
+function startDrag(clientX, clientY){
+  dragStart = getRelativePos(clientX, clientY);
+}
+function moveDrag(clientX, clientY){
+  if(!dragStart) return;
+  const cur = getRelativePos(clientX, clientY);
+  updateSelBoxVisual(dragStart.x, dragStart.y, cur.x, cur.y);
+}
+function endDrag(clientX, clientY){
+  if(!dragStart) return;
+  const cur = getRelativePos(clientX, clientY);
+  const x = Math.min(dragStart.x, cur.x);
+  const y = Math.min(dragStart.y, cur.y);
+  const w = Math.abs(cur.x - dragStart.x);
+  const h = Math.abs(cur.y - dragStart.y);
+  dragStart = null;
+  if(w > 0.02 && h > 0.02){
+    rect = {x,y,w,h};
+  }
+}
+
+previewWrap.addEventListener('touchstart', (e) => {
+  const t = e.touches[0];
+  startDrag(t.clientX, t.clientY);
+  e.preventDefault();
+}, {passive:false});
+previewWrap.addEventListener('touchmove', (e) => {
+  const t = e.touches[0];
+  moveDrag(t.clientX, t.clientY);
+  e.preventDefault();
+}, {passive:false});
+previewWrap.addEventListener('touchend', (e) => {
+  const t = e.changedTouches[0];
+  endDrag(t.clientX, t.clientY);
+});
+
+previewWrap.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+window.addEventListener('mouseup', (e) => endDrag(e.clientX, e.clientY));
+
+clearBtn.addEventListener('click', () => {
+  rect = null;
+  selBox.style.display = 'none';
+});
+
+processBtn.addEventListener('click', async () => {
+  if(!currentJobId) return;
+
+  processBtn.disabled = true;
+  processBtn.textContent = 'Đang xử lý...';
+  setStatus(processStatus, 'pending', '<span class="spin"></span>Đang xử lý video — có thể mất 15–40 giây.');
+
+  const payload = {
+    job_id: currentJobId,
+    x: rect ? rect.x : 0,
+    y: rect ? rect.y : 0,
+    w: rect ? rect.w : 0,
+    h: rect ? rect.h : 0,
+    text: rect ? replaceText.value.trim() : ""
+  };
+
+  try{
+    const res = await fetch('/api/process', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.detail || 'Có lỗi xảy ra.');
+    }
     const blob = await res.blob();
     const downloadUrl = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = downloadUrl;
-    a.download = 'tiktok_no_audio.mp4';
+    a.download = 'tiktok_edited.mp4';
     document.body.appendChild(a);
     a.click();
     a.remove();
     window.URL.revokeObjectURL(downloadUrl);
-
-    setStatus('ok', '✓ Xong! File đã được tải về máy bạn.');
+    setStatus(processStatus, 'ok', '✓ Xong! File đã được tải về máy bạn.');
   }catch(err){
-    setStatus('err', '✕ ' + err.message);
+    setStatus(processStatus, 'err', '✕ ' + err.message);
   }finally{
-    btn.disabled = false;
-    btn.textContent = 'Tải video không tiếng';
+    processBtn.disabled = false;
+    processBtn.textContent = 'Xử lý & tải video';
   }
 });
 </script>
