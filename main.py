@@ -41,7 +41,8 @@ def home():
     return HTMLResponse((STATIC_DIR / "index.html").read_text(encoding="utf-8"))
 
 
-MAX_PROCESS_WIDTH = 720  # giới hạn chiều rộng khi xử lý filter để tránh tràn RAM
+MAX_PROCESS_WIDTH = 480  # giới hạn chiều rộng khi xử lý filter (CPU free tier rất yếu)
+MAX_PROCESS_FPS = 20     # giảm khung hình/giây để giảm khối lượng mã hóa
 STALE_JOB_SECONDS = 30 * 60  # dọn job cũ quá 30 phút chưa xử lý xong (bị bỏ dở)
 
 
@@ -166,12 +167,12 @@ def process(req: ProcessRequest, background_tasks: BackgroundTasks):
                 width = MAX_PROCESS_WIDTH
                 height = int(orig_height * (MAX_PROCESS_WIDTH / orig_width))
                 height -= height % 2  # ffmpeg cần số chẵn
-                scale_step = f"[0:v]scale={width}:{height}[src]"
+                scale_step = f"[0:v]scale={width}:{height},fps={MAX_PROCESS_FPS}[src]"
                 src = "src"
             else:
                 width, height = orig_width, orig_height
-                scale_step = None
-                src = "0:v"
+                scale_step = f"[0:v]fps={MAX_PROCESS_FPS}[src]"
+                src = "src"
 
             rw = max(10, int(req.w * width))
             rh = max(10, int(req.h * height))
@@ -206,10 +207,10 @@ def process(req: ProcessRequest, background_tasks: BackgroundTasks):
                 "-filter_complex", filter_complex,
                 "-map", f"[{last}]",
                 "-an",
-                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "26",
+                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "30",
                 "-threads", "1",
                 str(output_file),
-            ], timeout=180)
+            ], timeout=280)
         else:
             ff_result = run([
                 "ffmpeg", "-y", "-i", str(raw_file),
