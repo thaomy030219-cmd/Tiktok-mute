@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import subprocess
+import time
 import uuid
 from pathlib import Path
 
@@ -40,8 +41,24 @@ def home():
     return HTMLResponse((STATIC_DIR / "index.html").read_text(encoding="utf-8"))
 
 
+MAX_PROCESS_WIDTH = 720  # giới hạn chiều rộng khi xử lý filter để tránh tràn RAM
+STALE_JOB_SECONDS = 30 * 60  # dọn job cũ quá 30 phút chưa xử lý xong (bị bỏ dở)
+
+
 def cleanup(folder: Path):
     shutil.rmtree(folder, ignore_errors=True)
+
+
+def cleanup_stale_jobs():
+    if not WORK_DIR.exists():
+        return
+    now = time.time()
+    for entry in WORK_DIR.iterdir():
+        try:
+            if entry.is_dir() and (now - entry.stat().st_mtime) > STALE_JOB_SECONDS:
+                cleanup(entry)
+        except FileNotFoundError:
+            pass
 
 
 def run(cmd, timeout=120):
@@ -62,6 +79,8 @@ def get_video_size(path: Path):
 
 @app.post("/api/prepare")
 def prepare(req: PrepareRequest):
+    cleanup_stale_jobs()
+
     url = req.url.strip()
     if not url or "tiktok.com" not in url:
         raise HTTPException(status_code=400, detail="Link không hợp lệ. Hãy dán link TikTok.")
@@ -136,19 +155,34 @@ def process(req: ProcessRequest, background_tasks: BackgroundTasks):
     output_file = job_dir / "output.mp4"
 
     try:
-        width, height = get_video_size(raw_file)
+        orig_width, orig_height = get_video_size(raw_file)
         has_region = req.w > 0 and req.h > 0
 
         if has_region:
+            # Thu nhỏ độ phân giải trước khi xử lý filter để tránh tràn RAM
+            # trên gói Free (blur/overlay/drawtext + mã hóa lại rất tốn bộ nhớ
+            # nếu giữ nguyên độ phân giải gốc, thường 1080x1920 trở lên).
+            if orig_width > MAX_PROCESS_WIDTH:
+                width = MAX_PROCESS_WIDTH
+                height = int(orig_height * (MAX_PROCESS_WIDTH / orig_width))
+                height -= height % 2  # ffmpeg cần số chẵn
+                scale_step = f"[0:v]scale={width}:{height}[src]"
+                src = "src"
+            else:
+                width, height = orig_width, orig_height
+                scale_step = None
+                src = "0:v"
+
             rw = max(10, int(req.w * width))
             rh = max(10, int(req.h * height))
             rx = min(max(0, int(req.x * width)), width - rw)
             ry = min(max(0, int(req.y * height)), height - rh)
 
-            filters = [
-                f"[0:v]crop={rw}:{rh}:{rx}:{ry},boxblur=14:6[blurred]",
-                f"[0:v][blurred]overlay={rx}:{ry}[bg]",
-            ]
+            filters = []
+            if scale_step:
+                filters.append(scale_step)
+            filters.append(f"[{src}]crop={rw}:{rh}:{rx}:{ry},boxblur=10:4[blurred]")
+            filters.append(f"[{src}][blurred]overlay={rx}:{ry}[bg]")
             last = "bg"
 
             if req.text.strip():
@@ -172,7 +206,8 @@ def process(req: ProcessRequest, background_tasks: BackgroundTasks):
                 "-filter_complex", filter_complex,
                 "-map", f"[{last}]",
                 "-an",
-                "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "26",
+                "-threads", "1",
                 str(output_file),
             ], timeout=180)
         else:
